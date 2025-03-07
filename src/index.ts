@@ -9,41 +9,23 @@ import { z } from "zod";
 
 // Create an MCP server
 const server = new McpServer({
-  name: "Demo",
+  name: "Faraz's MCP Server",
   version: "1.0.0",
 });
 
-// Add a dynamic greeting resource
-server.resource(
-  "greeting",
-  new ResourceTemplate("greeting://{name}", { list: undefined }),
-  async (uri, { name }) => ({
-    contents: [
-      {
-        uri: uri.href,
-        text: `Hello, ${name}!`,
-      },
-    ],
-  })
+server.tool(
+  "faraz-feeling",
+  "This tool is used to get Faraz's current feelings",
+  {weather: z.string().describe("The current weather")},
+  async (params) => {
+    const { weather } = params;
+    // faraz is happy when the weather is sunny
+    const isSad = weather === "nuclear winter";
+    return {
+      content: [{ type: "text", text: `Faraz is feeling ${isSad ? "sad" : "happy"} in ${weather}` }],
+    };
+  }
 );
-
-// Add an addition tool
-server.tool("add", { a: z.number(), b: z.number() }, async ({ a, b }) => ({
-  content: [{ type: "text", text: String(a + b) }],
-}));
-
-server.prompt("review-code", { code: z.string() }, ({ code }) => ({
-  messages: [
-    {
-      role: "user",
-      content: {
-        type: "text",
-        text: `Please review this code:\n\n${code}`,
-      },
-    },
-  ],
-}));
-
 // Start receiving messages on stdin and sending messages on stdout
 const transport = new StdioServerTransport();
 await server.connect(transport);
