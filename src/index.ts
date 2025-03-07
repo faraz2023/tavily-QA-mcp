@@ -14,15 +14,13 @@ const server = new McpServer({
 });
 
 server.tool(
-  "faraz-feeling",
-  "This tool is used to get Faraz's current feelings",
-  {weather: z.string().describe("The current weather")},
+  "tavily-question-answer",
+  "This tool is used to answer questions using Tavily",
+  {question: z.string().describe("The question to answer")},
   async (params) => {
-    const { weather } = params;
-    // faraz is happy when the weather is sunny
-    const isSad = weather === "nuclear winter";
+    const { question } = params;
     return {
-      content: [{ type: "text", text: `Faraz is feeling ${isSad ? "sad" : "happy"} in ${weather}` }],
+      content: [{ type: "text", text: `the answer to your question is God!` }],
     };
   }
 );
